@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(StudentForm));
             menuStrip1 = new MenuStrip();
             fileToolStripMenuItem = new ToolStripMenuItem();
             exitToolStripMenuItem = new ToolStripMenuItem();
@@ -42,8 +43,12 @@
             clb_availableCourses = new CheckedListBox();
             lbl_welcome = new Label();
             lbl_stats = new Label();
+            pictureBox1 = new PictureBox();
+            groupBox2 = new GroupBox();
             menuStrip1.SuspendLayout();
             groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
+            groupBox2.SuspendLayout();
             SuspendLayout();
             // 
             // menuStrip1
@@ -78,13 +83,14 @@
             // logoutToolStripMenuItem
             // 
             logoutToolStripMenuItem.Name = "logoutToolStripMenuItem";
-            logoutToolStripMenuItem.Size = new Size(113, 22);
+            logoutToolStripMenuItem.Size = new Size(180, 22);
             logoutToolStripMenuItem.Text = "Logout";
+            logoutToolStripMenuItem.Click += logoutToolStripMenuItem_Click_1;
             // 
             // refreshToolStripMenuItem
             // 
             refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
-            refreshToolStripMenuItem.Size = new Size(113, 22);
+            refreshToolStripMenuItem.Size = new Size(180, 22);
             refreshToolStripMenuItem.Text = "Refresh";
             // 
             // aboutToolStripMenuItem
@@ -146,7 +152,7 @@
             // lbl_welcome
             // 
             lbl_welcome.AutoSize = true;
-            lbl_welcome.Location = new Point(41, 41);
+            lbl_welcome.Location = new Point(24, 34);
             lbl_welcome.Name = "lbl_welcome";
             lbl_welcome.Size = new Size(38, 15);
             lbl_welcome.TabIndex = 5;
@@ -155,19 +161,40 @@
             // lbl_stats
             // 
             lbl_stats.AutoSize = true;
-            lbl_stats.Location = new Point(41, 83);
+            lbl_stats.Location = new Point(24, 78);
             lbl_stats.Name = "lbl_stats";
             lbl_stats.Size = new Size(38, 15);
             lbl_stats.TabIndex = 6;
             lbl_stats.Text = "label2";
+            // 
+            // pictureBox1
+            // 
+            pictureBox1.Image = (Image)resources.GetObject("pictureBox1.Image");
+            pictureBox1.Location = new Point(434, 27);
+            pictureBox1.Name = "pictureBox1";
+            pictureBox1.Size = new Size(121, 123);
+            pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
+            pictureBox1.TabIndex = 7;
+            pictureBox1.TabStop = false;
+            // 
+            // groupBox2
+            // 
+            groupBox2.Controls.Add(lbl_welcome);
+            groupBox2.Controls.Add(lbl_stats);
+            groupBox2.Location = new Point(12, 27);
+            groupBox2.Name = "groupBox2";
+            groupBox2.Size = new Size(416, 123);
+            groupBox2.TabIndex = 8;
+            groupBox2.TabStop = false;
+            groupBox2.Text = "Message";
             // 
             // StudentForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(567, 562);
-            Controls.Add(lbl_stats);
-            Controls.Add(lbl_welcome);
+            Controls.Add(groupBox2);
+            Controls.Add(pictureBox1);
             Controls.Add(groupBox1);
             Controls.Add(menuStrip1);
             Name = "StudentForm";
@@ -176,6 +203,9 @@
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
             groupBox1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
+            groupBox2.ResumeLayout(false);
+            groupBox2.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -195,5 +225,7 @@
         private CheckedListBox clb_availableCourses;
         private Label lbl_welcome;
         private Label lbl_stats;
+        private PictureBox pictureBox1;
+        private GroupBox groupBox2;
     }
 }

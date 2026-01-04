@@ -17,11 +17,13 @@ namespace UniversityRegistration
         int currentStudentId;
         int currentMajorId;
         string currentStudentName;
+
         static string connString = "Data Source= RDPWindows\\SQLEXPRESS;" +
-    " Initial Catalog=UniversityDB; Integrated Security=True;" +
-    " TrustServerCertificate=True";
+            " Initial Catalog=UniversityDB; Integrated Security=True;" +
+            " TrustServerCertificate=True";
 
         SqlConnection conn = new SqlConnection(connString);
+
         public StudentForm(int studentId, int majorId, string studentName)
         {
             InitializeComponent();
@@ -41,25 +43,37 @@ namespace UniversityRegistration
             RefreshStats();
         }
 
+
+        // --- REGISTRATION LOGIC ---
+
         private void RefreshStats()
         {
             try
             {
                 if (conn.State == ConnectionState.Closed) conn.Open();
 
-                // Query to count current enrollments for this specific student
-                string query = "SELECT COUNT(*) FROM Enrollments WHERE student_id = @sid";
+                // FIX: Join course_id from Enrollments to course_code from Courses
+                string query = @"SELECT COUNT(e.course_id), SUM(c.credits) 
+                                 FROM Enrollments e 
+                                 JOIN Courses c ON e.course_id = c.course_code 
+                                 WHERE e.student_id = @sid";
+
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@sid", currentStudentId);
 
-                int count = (int)cmd.ExecuteScalar();
-                lbl_stats.Text = $"You are currently registered in {count} courses.";
+                SqlDataReader reader = cmd.ExecuteReader();
+                if (reader.Read())
+                {
+                    int courseCount = reader[0] != DBNull.Value ? Convert.ToInt32(reader[0]) : 0;
+                    int creditSum = reader[1] != DBNull.Value ? Convert.ToInt32(reader[1]) : 0;
+
+                    lbl_stats.Text = $"Registered: {courseCount} courses | Total Credits: {creditSum}";
+                }
             }
             catch (Exception ex) { MessageBox.Show("Stats Error: " + ex.Message); }
             finally { conn.Close(); }
         }
 
-        // Call RefreshStats() at the end of btn_finalize_Click to update the message instantly
         private void btn_finalize_Click(object sender, EventArgs e)
         {
             try
@@ -67,9 +81,10 @@ namespace UniversityRegistration
                 conn.Open();
                 foreach (var item in lb_registeredCourses.Items)
                 {
-                    string courseCode = item.ToString().Split(' ')[0];
-                    // Note: Ensure your table column is 'course_code' to match your previous setup
-                    string query = "INSERT INTO Enrollments (student_id, course_code, reg_date) VALUES (@uid, @code, GETDATE())";
+                    string courseCode = item.ToString().Split('-')[0].Trim();
+
+                    // Using course_id to match your database schema
+                    string query = "INSERT INTO Enrollments (student_id, course_id, reg_date) VALUES (@uid, @code, GETDATE())";
 
                     SqlCommand cmd = new SqlCommand(query, conn);
                     cmd.Parameters.AddWithValue("@uid", currentStudentId);
@@ -77,11 +92,19 @@ namespace UniversityRegistration
                     cmd.ExecuteNonQuery();
                 }
                 MessageBox.Show("Registration successful!");
-                conn.Close(); // Close to allow RefreshStats to open it
+                lb_registeredCourses.Items.Clear(); // Clear "cart" after success
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+            }
+            finally
+            {
+                if (conn.State == ConnectionState.Open) conn.Close();
                 RefreshStats();
             }
-            catch (Exception ex) { MessageBox.Show("Error: " + ex.Message); if (conn.State == ConnectionState.Open) conn.Close(); }
         }
+
         private void LoadMajorCourses()
         {
             clb_availableCourses.Items.Clear();
@@ -89,32 +112,70 @@ namespace UniversityRegistration
             SqlCommand cmd = new SqlCommand(query, conn);
             cmd.Parameters.AddWithValue("@mid", currentMajorId);
 
-            conn.Open();
-            SqlDataReader reader = cmd.ExecuteReader();
-            while (reader.Read())
+            try
             {
-                // Format as "CODE - Title"
-                string item = $"{reader["course_code"]} - {reader["course_title"]}";
-                clb_availableCourses.Items.Add(item);
+                conn.Open();
+                SqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    string item = $"{reader["course_code"]} - {reader["course_title"]}";
+                    clb_availableCourses.Items.Add(item);
+                }
             }
-            conn.Close();
+            catch (Exception ex) { MessageBox.Show("Load Error: " + ex.Message); }
+            finally { conn.Close(); }
         }
 
         private void btn_register_Click(object sender, EventArgs e)
         {
-            // Loop through all checked items in the CheckedListBox
             foreach (var item in clb_availableCourses.CheckedItems)
             {
-                // Prevent duplicate registration in the UI list
                 if (!lb_registeredCourses.Items.Contains(item))
                 {
                     lb_registeredCourses.Items.Add(item);
                 }
-                else
-                {
-                    MessageBox.Show($"{item} is already in your registration list.");
-                }
             }
         }
+
+
+
+        // --- MENU BAR ACTIONS ---
+
+
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            LoadMajorCourses();
+            RefreshStats();
+        }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string githubUrl = "https://github.com/JosephDoesLinux/UniversityRegistration";
+            try
+            {
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = githubUrl,
+                    UseShellExecute = true
+                });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Unable to open the link: " + ex.Message);
+            }
+        }
+
+        private void logoutToolStripMenuItem_Click_1(object sender, EventArgs e)
+        {
+
+            new Login().Show();
+            this.Close();
+        }
     }
-}
+    }
