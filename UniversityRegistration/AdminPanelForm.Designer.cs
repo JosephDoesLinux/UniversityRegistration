@@ -39,7 +39,9 @@
             tabPage1 = new TabPage();
             pictureBox1 = new PictureBox();
             groupBox1 = new GroupBox();
-            button2 = new Button();
+            txt_description = new TextBox();
+            label10 = new Label();
+            btn_clearCourses = new Button();
             btn_add = new Button();
             cmb_majors = new ComboBox();
             label4 = new Label();
@@ -53,9 +55,11 @@
             btn_delete = new Button();
             btn_update = new Button();
             dgv_courses = new DataGridView();
-            col_id = new DataGridViewTextBoxColumn();
-            col_code = new DataGridViewTextBoxColumn();
-            col_title = new DataGridViewTextBoxColumn();
+            course_id = new DataGridViewTextBoxColumn();
+            course_code = new DataGridViewTextBoxColumn();
+            course_title = new DataGridViewTextBoxColumn();
+            course_description = new DataGridViewTextBoxColumn();
+            credits = new DataGridViewTextBoxColumn();
             tabPage2 = new TabPage();
             groupBox2 = new GroupBox();
             btn_clear = new Button();
@@ -68,6 +72,20 @@
             major_id = new ColumnHeader();
             major_name = new ColumnHeader();
             tabPage3 = new TabPage();
+            groupBox3 = new GroupBox();
+            btn_userDelete = new Button();
+            btn_userUpdate = new Button();
+            btn_userAdd = new Button();
+            groupBox4 = new GroupBox();
+            rb_student = new RadioButton();
+            rb_admin = new RadioButton();
+            label9 = new Label();
+            label8 = new Label();
+            label7 = new Label();
+            cmb_userMajor = new ComboBox();
+            txt_userPass = new TextBox();
+            txt_userName = new TextBox();
+            dgv_users = new DataGridView();
             menuStrip1.SuspendLayout();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
@@ -77,6 +95,10 @@
             ((System.ComponentModel.ISupportInitialize)dgv_courses).BeginInit();
             tabPage2.SuspendLayout();
             groupBox2.SuspendLayout();
+            tabPage3.SuspendLayout();
+            groupBox3.SuspendLayout();
+            groupBox4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dgv_users).BeginInit();
             SuspendLayout();
             // 
             // menuStrip1
@@ -121,6 +143,7 @@
             aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
             aboutToolStripMenuItem.Size = new Size(52, 20);
             aboutToolStripMenuItem.Text = "About";
+            aboutToolStripMenuItem.Click += aboutToolStripMenuItem_Click;
             // 
             // tabControl1
             // 
@@ -154,14 +177,16 @@
             pictureBox1.Image = (Image)resources.GetObject("pictureBox1.Image");
             pictureBox1.Location = new Point(6, 22);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(280, 69);
+            pictureBox1.Size = new Size(280, 54);
             pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
             pictureBox1.TabIndex = 17;
             pictureBox1.TabStop = false;
             // 
             // groupBox1
             // 
-            groupBox1.Controls.Add(button2);
+            groupBox1.Controls.Add(txt_description);
+            groupBox1.Controls.Add(label10);
+            groupBox1.Controls.Add(btn_clearCourses);
             groupBox1.Controls.Add(btn_add);
             groupBox1.Controls.Add(cmb_majors);
             groupBox1.Controls.Add(label4);
@@ -171,27 +196,45 @@
             groupBox1.Controls.Add(label3);
             groupBox1.Controls.Add(label2);
             groupBox1.Controls.Add(label1);
-            groupBox1.Location = new Point(6, 97);
+            groupBox1.Location = new Point(6, 82);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(280, 246);
+            groupBox1.Size = new Size(280, 261);
             groupBox1.TabIndex = 16;
             groupBox1.TabStop = false;
             groupBox1.Text = "Course Details";
             // 
-            // button2
+            // txt_description
             // 
-            button2.Location = new Point(43, 174);
-            button2.Name = "button2";
-            button2.Size = new Size(95, 23);
-            button2.TabIndex = 19;
-            button2.Text = "Clear";
-            button2.UseVisualStyleBackColor = true;
+            txt_description.Location = new Point(90, 87);
+            txt_description.Multiline = true;
+            txt_description.Name = "txt_description";
+            txt_description.Size = new Size(184, 107);
+            txt_description.TabIndex = 21;
+            // 
+            // label10
+            // 
+            label10.AutoSize = true;
+            label10.Location = new Point(14, 90);
+            label10.Name = "label10";
+            label10.Size = new Size(70, 15);
+            label10.TabIndex = 20;
+            label10.Text = "Description:";
+            // 
+            // btn_clearCourses
+            // 
+            btn_clearCourses.Location = new Point(152, 232);
+            btn_clearCourses.Name = "btn_clearCourses";
+            btn_clearCourses.Size = new Size(60, 23);
+            btn_clearCourses.TabIndex = 19;
+            btn_clearCourses.Text = "Clear";
+            btn_clearCourses.UseVisualStyleBackColor = true;
+            btn_clearCourses.Click += btn_clearCourses_Click;
             // 
             // btn_add
             // 
-            btn_add.Location = new Point(148, 174);
+            btn_add.Location = new Point(218, 232);
             btn_add.Name = "btn_add";
-            btn_add.Size = new Size(95, 23);
+            btn_add.Size = new Size(56, 23);
             btn_add.TabIndex = 18;
             btn_add.Text = "Add";
             btn_add.UseVisualStyleBackColor = true;
@@ -200,15 +243,15 @@
             // cmb_majors
             // 
             cmb_majors.FormattingEnabled = true;
-            cmb_majors.Location = new Point(122, 116);
+            cmb_majors.Location = new Point(90, 200);
             cmb_majors.Name = "cmb_majors";
-            cmb_majors.Size = new Size(121, 23);
+            cmb_majors.Size = new Size(184, 23);
             cmb_majors.TabIndex = 17;
             // 
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new Point(75, 119);
+            label4.Location = new Point(43, 203);
             label4.Name = "label4";
             label4.Size = new Size(41, 15);
             label4.TabIndex = 16;
@@ -216,21 +259,21 @@
             // 
             // txt_title
             // 
-            txt_title.Location = new Point(122, 83);
+            txt_title.Location = new Point(90, 55);
             txt_title.Name = "txt_title";
-            txt_title.Size = new Size(121, 23);
+            txt_title.Size = new Size(184, 23);
             txt_title.TabIndex = 15;
             // 
             // txt_code
             // 
-            txt_code.Location = new Point(122, 50);
+            txt_code.Location = new Point(90, 22);
             txt_code.Name = "txt_code";
-            txt_code.Size = new Size(121, 23);
+            txt_code.Size = new Size(184, 23);
             txt_code.TabIndex = 14;
             // 
             // nud_credits
             // 
-            nud_credits.Location = new Point(185, 145);
+            nud_credits.Location = new Point(90, 232);
             nud_credits.Maximum = new decimal(new int[] { 9, 0, 0, 0 });
             nud_credits.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             nud_credits.Name = "nud_credits";
@@ -241,7 +284,7 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(122, 147);
+            label3.Location = new Point(37, 236);
             label3.Name = "label3";
             label3.Size = new Size(47, 15);
             label3.TabIndex = 12;
@@ -250,7 +293,7 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(43, 86);
+            label2.Location = new Point(11, 63);
             label2.Name = "label2";
             label2.Size = new Size(73, 15);
             label2.TabIndex = 11;
@@ -259,7 +302,7 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(38, 53);
+            label1.Location = new Point(6, 30);
             label1.Name = "label1";
             label1.Size = new Size(78, 15);
             label1.TabIndex = 10;
@@ -297,10 +340,12 @@
             // dgv_courses
             // 
             dgv_courses.AllowUserToAddRows = false;
+            dgv_courses.AllowUserToDeleteRows = false;
+            dgv_courses.AllowUserToOrderColumns = true;
             dgv_courses.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             dgv_courses.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgv_courses.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgv_courses.Columns.AddRange(new DataGridViewColumn[] { col_id, col_code, col_title });
+            dgv_courses.Columns.AddRange(new DataGridViewColumn[] { course_id, course_code, course_title, course_description, credits });
             dgv_courses.Location = new Point(292, 40);
             dgv_courses.MultiSelect = false;
             dgv_courses.Name = "dgv_courses";
@@ -311,26 +356,40 @@
             dgv_courses.TabIndex = 12;
             dgv_courses.CellClick += dgv_courses_CellClick;
             // 
-            // col_id
+            // course_id
             // 
-            col_id.DataPropertyName = "course_id";
-            col_id.HeaderText = "ID";
-            col_id.Name = "col_id";
-            col_id.ReadOnly = true;
+            course_id.DataPropertyName = "course_id";
+            course_id.HeaderText = "ID";
+            course_id.Name = "course_id";
+            course_id.ReadOnly = true;
             // 
-            // col_code
+            // course_code
             // 
-            col_code.DataPropertyName = "course_code";
-            col_code.HeaderText = "Code";
-            col_code.Name = "col_code";
-            col_code.ReadOnly = true;
+            course_code.DataPropertyName = "course_code";
+            course_code.HeaderText = "Code";
+            course_code.Name = "course_code";
+            course_code.ReadOnly = true;
             // 
-            // col_title
+            // course_title
             // 
-            col_title.DataPropertyName = "course_code";
-            col_title.HeaderText = "Title";
-            col_title.Name = "col_title";
-            col_title.ReadOnly = true;
+            course_title.DataPropertyName = "course_title";
+            course_title.HeaderText = "Title";
+            course_title.Name = "course_title";
+            course_title.ReadOnly = true;
+            // 
+            // course_description
+            // 
+            course_description.DataPropertyName = "course_description";
+            course_description.HeaderText = "Description";
+            course_description.Name = "course_description";
+            course_description.ReadOnly = true;
+            // 
+            // credits
+            // 
+            credits.DataPropertyName = "credits";
+            credits.HeaderText = "Credits";
+            credits.Name = "credits";
+            credits.ReadOnly = true;
             // 
             // tabPage2
             // 
@@ -441,6 +500,8 @@
             // 
             // tabPage3
             // 
+            tabPage3.Controls.Add(groupBox3);
+            tabPage3.Controls.Add(dgv_users);
             tabPage3.Location = new Point(4, 24);
             tabPage3.Name = "tabPage3";
             tabPage3.Padding = new Padding(3);
@@ -448,6 +509,152 @@
             tabPage3.TabIndex = 2;
             tabPage3.Text = "Accounts";
             tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // groupBox3
+            // 
+            groupBox3.Controls.Add(btn_userDelete);
+            groupBox3.Controls.Add(btn_userUpdate);
+            groupBox3.Controls.Add(btn_userAdd);
+            groupBox3.Controls.Add(groupBox4);
+            groupBox3.Controls.Add(label9);
+            groupBox3.Controls.Add(label8);
+            groupBox3.Controls.Add(label7);
+            groupBox3.Controls.Add(cmb_userMajor);
+            groupBox3.Controls.Add(txt_userPass);
+            groupBox3.Controls.Add(txt_userName);
+            groupBox3.Location = new Point(6, 6);
+            groupBox3.Name = "groupBox3";
+            groupBox3.Size = new Size(756, 115);
+            groupBox3.TabIndex = 1;
+            groupBox3.TabStop = false;
+            groupBox3.Text = "Manage Students and Admins";
+            // 
+            // btn_userDelete
+            // 
+            btn_userDelete.Location = new Point(639, 23);
+            btn_userDelete.Name = "btn_userDelete";
+            btn_userDelete.Size = new Size(103, 80);
+            btn_userDelete.TabIndex = 9;
+            btn_userDelete.Text = "Delete";
+            btn_userDelete.UseVisualStyleBackColor = true;
+            btn_userDelete.Click += btn_userDelete_Click;
+            // 
+            // btn_userUpdate
+            // 
+            btn_userUpdate.Location = new Point(530, 23);
+            btn_userUpdate.Name = "btn_userUpdate";
+            btn_userUpdate.Size = new Size(103, 80);
+            btn_userUpdate.TabIndex = 8;
+            btn_userUpdate.Text = "Update";
+            btn_userUpdate.UseVisualStyleBackColor = true;
+            btn_userUpdate.Click += btn_userUpdate_Click;
+            // 
+            // btn_userAdd
+            // 
+            btn_userAdd.Location = new Point(421, 22);
+            btn_userAdd.Name = "btn_userAdd";
+            btn_userAdd.Size = new Size(103, 80);
+            btn_userAdd.TabIndex = 7;
+            btn_userAdd.Text = "Add";
+            btn_userAdd.UseVisualStyleBackColor = true;
+            btn_userAdd.Click += btn_userAdd_Click;
+            // 
+            // groupBox4
+            // 
+            groupBox4.Controls.Add(rb_student);
+            groupBox4.Controls.Add(rb_admin);
+            groupBox4.Location = new Point(282, 18);
+            groupBox4.Name = "groupBox4";
+            groupBox4.Size = new Size(121, 85);
+            groupBox4.TabIndex = 6;
+            groupBox4.TabStop = false;
+            groupBox4.Text = "SelectedUser Role:";
+            // 
+            // rb_student
+            // 
+            rb_student.AutoSize = true;
+            rb_student.Checked = true;
+            rb_student.Location = new Point(27, 45);
+            rb_student.Name = "rb_student";
+            rb_student.Size = new Size(66, 19);
+            rb_student.TabIndex = 1;
+            rb_student.TabStop = true;
+            rb_student.Text = "Student";
+            rb_student.UseVisualStyleBackColor = true;
+            // 
+            // rb_admin
+            // 
+            rb_admin.AutoSize = true;
+            rb_admin.Location = new Point(27, 20);
+            rb_admin.Name = "rb_admin";
+            rb_admin.Size = new Size(61, 19);
+            rb_admin.TabIndex = 0;
+            rb_admin.Text = "Admin";
+            rb_admin.UseVisualStyleBackColor = true;
+            // 
+            // label9
+            // 
+            label9.AutoSize = true;
+            label9.Location = new Point(50, 83);
+            label9.Name = "label9";
+            label9.Size = new Size(41, 15);
+            label9.TabIndex = 5;
+            label9.Text = "Major:";
+            // 
+            // label8
+            // 
+            label8.AutoSize = true;
+            label8.Location = new Point(6, 54);
+            label8.Name = "label8";
+            label8.Size = new Size(86, 15);
+            label8.TabIndex = 4;
+            label8.Text = "User Password:";
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Location = new Point(27, 21);
+            label7.Name = "label7";
+            label7.Size = new Size(64, 15);
+            label7.TabIndex = 3;
+            label7.Text = "Full Name:";
+            // 
+            // cmb_userMajor
+            // 
+            cmb_userMajor.FormattingEnabled = true;
+            cmb_userMajor.Location = new Point(98, 80);
+            cmb_userMajor.Name = "cmb_userMajor";
+            cmb_userMajor.Size = new Size(178, 23);
+            cmb_userMajor.TabIndex = 2;
+            // 
+            // txt_userPass
+            // 
+            txt_userPass.Location = new Point(98, 51);
+            txt_userPass.Name = "txt_userPass";
+            txt_userPass.Size = new Size(178, 23);
+            txt_userPass.TabIndex = 1;
+            // 
+            // txt_userName
+            // 
+            txt_userName.Location = new Point(97, 18);
+            txt_userName.Name = "txt_userName";
+            txt_userName.Size = new Size(178, 23);
+            txt_userName.TabIndex = 0;
+            // 
+            // dgv_users
+            // 
+            dgv_users.AllowUserToAddRows = false;
+            dgv_users.AllowUserToDeleteRows = false;
+            dgv_users.AllowUserToOrderColumns = true;
+            dgv_users.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgv_users.Location = new Point(6, 127);
+            dgv_users.MultiSelect = false;
+            dgv_users.Name = "dgv_users";
+            dgv_users.ReadOnly = true;
+            dgv_users.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgv_users.Size = new Size(756, 250);
+            dgv_users.TabIndex = 0;
+            dgv_users.CellClick += dgv_users_CellClick;
             // 
             // AdminPanelForm
             // 
@@ -473,6 +680,12 @@
             tabPage2.ResumeLayout(false);
             groupBox2.ResumeLayout(false);
             groupBox2.PerformLayout();
+            tabPage3.ResumeLayout(false);
+            groupBox3.ResumeLayout(false);
+            groupBox3.PerformLayout();
+            groupBox4.ResumeLayout(false);
+            groupBox4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)dgv_users).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -495,7 +708,7 @@
         private DataGridView dgv_courses;
         private PictureBox pictureBox1;
         private GroupBox groupBox1;
-        private Button button2;
+        private Button btn_clearCourses;
         private Button btn_add;
         private ComboBox cmb_majors;
         private Label label4;
@@ -505,9 +718,6 @@
         private Label label3;
         private Label label2;
         private Label label1;
-        private DataGridViewTextBoxColumn col_id;
-        private DataGridViewTextBoxColumn col_code;
-        private DataGridViewTextBoxColumn col_title;
         private ListView lv_majors;
         private ColumnHeader major_id;
         private ColumnHeader major_name;
@@ -518,5 +728,26 @@
         private TextBox txt_majorName;
         private Button btn_updateMajor;
         private Button btn_clear;
+        private GroupBox groupBox3;
+        private ComboBox cmb_userMajor;
+        private TextBox txt_userPass;
+        private TextBox txt_userName;
+        private DataGridView dgv_users;
+        private GroupBox groupBox4;
+        private RadioButton rb_student;
+        private RadioButton rb_admin;
+        private Label label9;
+        private Label label8;
+        private Label label7;
+        private Button btn_userDelete;
+        private Button btn_userUpdate;
+        private Button btn_userAdd;
+        private TextBox txt_description;
+        private Label label10;
+        private DataGridViewTextBoxColumn course_id;
+        private DataGridViewTextBoxColumn course_code;
+        private DataGridViewTextBoxColumn course_title;
+        private DataGridViewTextBoxColumn course_description;
+        private DataGridViewTextBoxColumn credits;
     }
 }
