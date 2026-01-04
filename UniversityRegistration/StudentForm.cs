@@ -1,12 +1,7 @@
 ﻿using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace UniversityRegistration
@@ -18,6 +13,10 @@ namespace UniversityRegistration
         int currentMajorId;
         string currentStudentName;
 
+        // NEW: Map to link Course Code (String) to the actual Course ID (Integer)
+        // Key: "CSIT381", Value: 12 (the auto-increment ID)
+        Dictionary<string, int> courseIdMap = new Dictionary<string, int>();
+
         static string connString = "Data Source= RDPWindows\\SQLEXPRESS;" +
             " Initial Catalog=UniversityDB; Integrated Security=True;" +
             " TrustServerCertificate=True";
@@ -27,7 +26,6 @@ namespace UniversityRegistration
         public StudentForm(int studentId, int majorId, string studentName)
         {
             InitializeComponent();
-            // Assigning the passed values to our class variables
             this.currentStudentId = studentId;
             this.currentMajorId = majorId;
             this.currentStudentName = studentName;
@@ -35,14 +33,11 @@ namespace UniversityRegistration
 
         private void StudentForm_Load(object sender, EventArgs e)
         {
-            // Display the welcome message
             lbl_welcome.Text = $"Welcome, {currentStudentName} (ID: {currentStudentId})";
-
-            // Load data
             LoadMajorCourses();
             RefreshStats();
+            LoadRegisteredHistory();
         }
-
 
         // --- REGISTRATION LOGIC ---
 
@@ -52,10 +47,10 @@ namespace UniversityRegistration
             {
                 if (conn.State == ConnectionState.Closed) conn.Open();
 
-                // FIX: Join course_id from Enrollments to course_code from Courses
+                // JOIN on numeric course_id to get accurate credit sums
                 string query = @"SELECT COUNT(e.course_id), SUM(c.credits) 
                                  FROM Enrollments e 
-                                 JOIN Courses c ON e.course_id = c.course_code 
+                                 JOIN Courses c ON e.course_id = c.course_id 
                                  WHERE e.student_id = @sid";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
@@ -74,41 +69,13 @@ namespace UniversityRegistration
             finally { conn.Close(); }
         }
 
-        private void btn_finalize_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                conn.Open();
-                foreach (var item in lb_registeredCourses.Items)
-                {
-                    string courseCode = item.ToString().Split('-')[0].Trim();
-
-                    // Using course_id to match your database schema
-                    string query = "INSERT INTO Enrollments (student_id, course_id, reg_date) VALUES (@uid, @code, GETDATE())";
-
-                    SqlCommand cmd = new SqlCommand(query, conn);
-                    cmd.Parameters.AddWithValue("@uid", currentStudentId);
-                    cmd.Parameters.AddWithValue("@code", courseCode);
-                    cmd.ExecuteNonQuery();
-                }
-                MessageBox.Show("Registration successful!");
-                lb_registeredCourses.Items.Clear(); // Clear "cart" after success
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error: " + ex.Message);
-            }
-            finally
-            {
-                if (conn.State == ConnectionState.Open) conn.Close();
-                RefreshStats();
-            }
-        }
-
         private void LoadMajorCourses()
         {
             clb_availableCourses.Items.Clear();
-            string query = "SELECT course_code, course_title FROM Courses WHERE major_id = @mid";
+            courseIdMap.Clear(); // Clear the map before reloading
+
+            // Fetch the ID, Code, and Title
+            string query = "SELECT course_id, course_code, course_title FROM Courses WHERE major_id = @mid";
             SqlCommand cmd = new SqlCommand(query, conn);
             cmd.Parameters.AddWithValue("@mid", currentMajorId);
 
@@ -118,8 +85,18 @@ namespace UniversityRegistration
                 SqlDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
-                    string item = $"{reader["course_code"]} - {reader["course_title"]}";
-                    clb_availableCourses.Items.Add(item);
+                    string code = reader["course_code"].ToString();
+                    int id = Convert.ToInt32(reader["course_id"]);
+                    string displayString = $"{code} - {reader["course_title"]}";
+
+                    // Add text to the UI list
+                    clb_availableCourses.Items.Add(displayString);
+
+                    // Add the relationship to our Dictionary
+                    if (!courseIdMap.ContainsKey(code))
+                    {
+                        courseIdMap.Add(code, id);
+                    }
                 }
             }
             catch (Exception ex) { MessageBox.Show("Load Error: " + ex.Message); }
@@ -137,19 +114,47 @@ namespace UniversityRegistration
             }
         }
 
+        private void btn_finalize_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                conn.Open();
+                foreach (var item in lb_registeredCourses.Items)
+                {
+                    // 1. Extract the Course Code (e.g., "CSIT381")
+                    string courseCode = item.ToString().Split('-')[0].Trim();
 
+                    // 2. Use the map to get the real Integer Course ID
+                    if (courseIdMap.TryGetValue(courseCode, out int actualNumericId))
+                    {
+                        // 3. Insert the Integer ID into the numeric course_id column
+                        string query = "INSERT INTO Enrollments (student_id, course_id, reg_date) VALUES (@uid, @cid, GETDATE())";
+
+                        SqlCommand cmd = new SqlCommand(query, conn);
+                        cmd.Parameters.AddWithValue("@uid", currentStudentId);
+                        cmd.Parameters.AddWithValue("@cid", actualNumericId); // Correct numeric type
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+                MessageBox.Show("Registration successful!");
+                lb_registeredCourses.Items.Clear();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Finalize Error: " + ex.Message);
+            }
+            finally
+            {
+                if (conn.State == ConnectionState.Open) conn.Close();
+                RefreshStats();
+                LoadRegisteredHistory();
+            }
+        }
 
         // --- MENU BAR ACTIONS ---
 
-
-
-
-
-
-
         private void logoutToolStripMenuItem_Click_1(object sender, EventArgs e)
         {
-
             new Login().Show();
             this.Close();
         }
@@ -180,6 +185,31 @@ namespace UniversityRegistration
             {
                 MessageBox.Show("Unable to open the link: " + ex.Message);
             }
+        }
+        private void LoadRegisteredHistory()
+        {
+            lb_registeredCourses.Items.Clear();
+
+            // Query to get the Code and Title of everything the student is ALREADY in
+            string query = @"SELECT c.course_code, c.course_title 
+                     FROM Enrollments e 
+                     JOIN Courses c ON e.course_id = c.course_id 
+                     WHERE e.student_id = @sid";
+
+            SqlCommand cmd = new SqlCommand(query, conn);
+            cmd.Parameters.AddWithValue("@sid", currentStudentId);
+
+            try
+            {
+                if (conn.State == ConnectionState.Closed) conn.Open();
+                SqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    lb_registeredCourses.Items.Add($"{reader["course_code"]} - {reader["course_title"]}");
+                }
+            }
+            catch (Exception ex) { MessageBox.Show("History Load Error: " + ex.Message); }
+            finally { conn.Close(); }
         }
     }
 }
