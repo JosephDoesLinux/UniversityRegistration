@@ -86,6 +86,7 @@
             txt_userPass = new TextBox();
             txt_userName = new TextBox();
             dgv_users = new DataGridView();
+            refreshToolStripMenuItem = new ToolStripMenuItem();
             menuStrip1.SuspendLayout();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
@@ -126,7 +127,7 @@
             // 
             // actionsToolStripMenuItem
             // 
-            actionsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { logoutToolStripMenuItem });
+            actionsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { logoutToolStripMenuItem, refreshToolStripMenuItem });
             actionsToolStripMenuItem.Name = "actionsToolStripMenuItem";
             actionsToolStripMenuItem.Size = new Size(59, 20);
             actionsToolStripMenuItem.Text = "Actions";
@@ -134,7 +135,7 @@
             // logoutToolStripMenuItem
             // 
             logoutToolStripMenuItem.Name = "logoutToolStripMenuItem";
-            logoutToolStripMenuItem.Size = new Size(112, 22);
+            logoutToolStripMenuItem.Size = new Size(180, 22);
             logoutToolStripMenuItem.Text = "Logout";
             logoutToolStripMenuItem.Click += logoutToolStripMenuItem_Click;
             // 
@@ -656,6 +657,13 @@
             dgv_users.TabIndex = 0;
             dgv_users.CellClick += dgv_users_CellClick;
             // 
+            // refreshToolStripMenuItem
+            // 
+            refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
+            refreshToolStripMenuItem.Size = new Size(180, 22);
+            refreshToolStripMenuItem.Text = "Refresh";
+            refreshToolStripMenuItem.Click += refreshToolStripMenuItem_Click;
+            // 
             // AdminPanelForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -749,5 +757,6 @@
         private DataGridViewTextBoxColumn course_title;
         private DataGridViewTextBoxColumn course_description;
         private DataGridViewTextBoxColumn credits;
+        private ToolStripMenuItem refreshToolStripMenuItem;
     }
 }

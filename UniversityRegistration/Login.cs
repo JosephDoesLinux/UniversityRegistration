@@ -29,8 +29,8 @@ namespace UniversityRegistration
 
         private void btn_login_Click(object sender, EventArgs e)
         {
-            // Example Login Button Code
-            string query = "SELECT user_id, user_role FROM dbo.Users WHERE user_id=@id AND password=@pass";
+            // FIX: Include full_name and major_id in the SELECT statement
+            string query = "SELECT user_id, user_role, full_name, major_id FROM dbo.Users WHERE user_id=@id AND password=@pass";
             SqlCommand cmd = new SqlCommand(query, conn);
             cmd.Parameters.AddWithValue("@id", txt_id.Text);
             cmd.Parameters.AddWithValue("@pass", txt_password.Text);
@@ -38,16 +38,24 @@ namespace UniversityRegistration
             conn.Open();
             SqlDataReader reader = cmd.ExecuteReader();
 
-            if (reader.Read()) // If a record is found
+            if (reader.Read())
             {
-                int userId = (int)reader["user_id"];
                 string role = reader["user_role"].ToString();
 
                 if (role == "Admin")
+                {
                     new AdminPanelForm().Show();
+                }
                 else
-                    new StudentForm(userId).Show(); // Pass ID to the next form
+                {
+                    int studentId = Convert.ToInt32(reader["user_id"]);
+                    // Ensure major_id isn't null in the DB to avoid conversion errors
+                    int majorId = reader["major_id"] != DBNull.Value ? Convert.ToInt32(reader["major_id"]) : 0;
+                    string studentName = reader["full_name"].ToString();
 
+                    StudentForm studentTab = new StudentForm(studentId, majorId, studentName);
+                    studentTab.Show();
+                }
                 this.Hide();
             }
             else

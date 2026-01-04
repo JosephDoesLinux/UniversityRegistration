@@ -418,7 +418,7 @@ namespace UniversityRegistration
         }
 
 
-            private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             string githubUrl = "https://github.com/JosephDoesLinux/UniversityRegistration";
 
@@ -436,7 +436,12 @@ namespace UniversityRegistration
                 MessageBox.Show("Unable to open the link: " + ex.Message);
             }
         }
+
+        private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            RefreshDashboard();
+        }
     }
-    }
+}
 
 
