@@ -1,6 +1,6 @@
 ﻿namespace UniversityRegistration
 {
-    partial class Form1
+    partial class Login
     {
         /// <summary>
         ///  Required designer variable.
@@ -28,15 +28,15 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Login));
             pictureBox1 = new PictureBox();
             groupBox1 = new GroupBox();
+            link_ums = new LinkLabel();
             btn_login = new Button();
             txt_password = new TextBox();
             txt_id = new TextBox();
             label2 = new Label();
             label1 = new Label();
-            link_ums = new LinkLabel();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             groupBox1.SuspendLayout();
             SuspendLayout();
@@ -66,6 +66,17 @@
             groupBox1.TabStop = false;
             groupBox1.Text = "Enter Credentials for Registration";
             // 
+            // link_ums
+            // 
+            link_ums.AutoSize = true;
+            link_ums.Location = new Point(6, 127);
+            link_ums.Name = "link_ums";
+            link_ums.Size = new Size(97, 15);
+            link_ums.TabIndex = 7;
+            link_ums.TabStop = true;
+            link_ums.Text = "LIU UMS Website";
+            link_ums.LinkClicked += link_ums_LinkClicked;
+            // 
             // btn_login
             // 
             btn_login.Location = new Point(137, 123);
@@ -74,6 +85,7 @@
             btn_login.TabIndex = 2;
             btn_login.Text = "Login";
             btn_login.UseVisualStyleBackColor = true;
+            btn_login.Click += btn_login_Click;
             // 
             // txt_password
             // 
@@ -107,17 +119,6 @@
             label1.Size = new Size(66, 15);
             label1.TabIndex = 5;
             label1.Text = "ID               :";
-            // 
-            // link_ums
-            // 
-            link_ums.AutoSize = true;
-            link_ums.Location = new Point(6, 127);
-            link_ums.Name = "link_ums";
-            link_ums.Size = new Size(97, 15);
-            link_ums.TabIndex = 7;
-            link_ums.TabStop = true;
-            link_ums.Text = "LIU UMS Website";
-            link_ums.LinkClicked += link_ums_LinkClicked;
             // 
             // Form1
             // 
