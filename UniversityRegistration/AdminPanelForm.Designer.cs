@@ -37,31 +37,46 @@
             aboutToolStripMenuItem = new ToolStripMenuItem();
             tabControl1 = new TabControl();
             tabPage1 = new TabPage();
-            tabPage2 = new TabPage();
-            tabPage3 = new TabPage();
-            dataGridView1 = new DataGridView();
-            button3 = new Button();
-            button4 = new Button();
-            label5 = new Label();
+            pictureBox1 = new PictureBox();
             groupBox1 = new GroupBox();
             button2 = new Button();
-            button1 = new Button();
-            comboBox1 = new ComboBox();
+            btn_add = new Button();
+            cmb_majors = new ComboBox();
             label4 = new Label();
-            textBox2 = new TextBox();
-            textBox1 = new TextBox();
-            numericUpDown1 = new NumericUpDown();
+            txt_title = new TextBox();
+            txt_code = new TextBox();
+            nud_credits = new NumericUpDown();
             label3 = new Label();
             label2 = new Label();
             label1 = new Label();
-            pictureBox1 = new PictureBox();
+            label5 = new Label();
+            btn_delete = new Button();
+            btn_update = new Button();
+            dgv_courses = new DataGridView();
+            col_id = new DataGridViewTextBoxColumn();
+            col_code = new DataGridViewTextBoxColumn();
+            col_title = new DataGridViewTextBoxColumn();
+            tabPage2 = new TabPage();
+            groupBox2 = new GroupBox();
+            btn_clear = new Button();
+            btn_updateMajor = new Button();
+            btn_addMajor = new Button();
+            btn_deleteMajor = new Button();
+            label6 = new Label();
+            txt_majorName = new TextBox();
+            lv_majors = new ListView();
+            major_id = new ColumnHeader();
+            major_name = new ColumnHeader();
+            tabPage3 = new TabPage();
             menuStrip1.SuspendLayout();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
-            groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
+            groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)nud_credits).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dgv_courses).BeginInit();
+            tabPage2.SuspendLayout();
+            groupBox2.SuspendLayout();
             SuspendLayout();
             // 
             // menuStrip1
@@ -83,8 +98,9 @@
             // exitToolStripMenuItem
             // 
             exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            exitToolStripMenuItem.Size = new Size(180, 22);
+            exitToolStripMenuItem.Size = new Size(92, 22);
             exitToolStripMenuItem.Text = "Exit";
+            exitToolStripMenuItem.Click += exitToolStripMenuItem_Click;
             // 
             // actionsToolStripMenuItem
             // 
@@ -96,8 +112,9 @@
             // logoutToolStripMenuItem
             // 
             logoutToolStripMenuItem.Name = "logoutToolStripMenuItem";
-            logoutToolStripMenuItem.Size = new Size(180, 22);
+            logoutToolStripMenuItem.Size = new Size(112, 22);
             logoutToolStripMenuItem.Text = "Logout";
+            logoutToolStripMenuItem.Click += logoutToolStripMenuItem_Click;
             // 
             // aboutToolStripMenuItem
             // 
@@ -121,9 +138,9 @@
             tabPage1.Controls.Add(pictureBox1);
             tabPage1.Controls.Add(groupBox1);
             tabPage1.Controls.Add(label5);
-            tabPage1.Controls.Add(button4);
-            tabPage1.Controls.Add(button3);
-            tabPage1.Controls.Add(dataGridView1);
+            tabPage1.Controls.Add(btn_delete);
+            tabPage1.Controls.Add(btn_update);
+            tabPage1.Controls.Add(dgv_courses);
             tabPage1.Location = new Point(4, 24);
             tabPage1.Name = "tabPage1";
             tabPage1.Padding = new Padding(3);
@@ -132,70 +149,25 @@
             tabPage1.Text = "Courses";
             tabPage1.UseVisualStyleBackColor = true;
             // 
-            // tabPage2
+            // pictureBox1
             // 
-            tabPage2.Location = new Point(4, 24);
-            tabPage2.Name = "tabPage2";
-            tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(768, 383);
-            tabPage2.TabIndex = 1;
-            tabPage2.Text = "Majors";
-            tabPage2.UseVisualStyleBackColor = true;
-            // 
-            // tabPage3
-            // 
-            tabPage3.Location = new Point(4, 24);
-            tabPage3.Name = "tabPage3";
-            tabPage3.Padding = new Padding(3);
-            tabPage3.Size = new Size(768, 383);
-            tabPage3.TabIndex = 2;
-            tabPage3.Text = "Accounts";
-            tabPage3.UseVisualStyleBackColor = true;
-            // 
-            // dataGridView1
-            // 
-            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Location = new Point(292, 40);
-            dataGridView1.Name = "dataGridView1";
-            dataGridView1.Size = new Size(470, 303);
-            dataGridView1.TabIndex = 12;
-            // 
-            // button3
-            // 
-            button3.Location = new Point(687, 349);
-            button3.Name = "button3";
-            button3.Size = new Size(75, 23);
-            button3.TabIndex = 13;
-            button3.Text = "Update";
-            button3.UseVisualStyleBackColor = true;
-            // 
-            // button4
-            // 
-            button4.Location = new Point(606, 349);
-            button4.Name = "button4";
-            button4.Size = new Size(75, 23);
-            button4.TabIndex = 14;
-            button4.Text = "Delete";
-            button4.UseVisualStyleBackColor = true;
-            // 
-            // label5
-            // 
-            label5.AutoSize = true;
-            label5.Location = new Point(292, 22);
-            label5.Name = "label5";
-            label5.Size = new Size(183, 15);
-            label5.TabIndex = 15;
-            label5.Text = "Select an item to update/remove:";
+            pictureBox1.Image = (Image)resources.GetObject("pictureBox1.Image");
+            pictureBox1.Location = new Point(6, 22);
+            pictureBox1.Name = "pictureBox1";
+            pictureBox1.Size = new Size(280, 69);
+            pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
+            pictureBox1.TabIndex = 17;
+            pictureBox1.TabStop = false;
             // 
             // groupBox1
             // 
             groupBox1.Controls.Add(button2);
-            groupBox1.Controls.Add(button1);
-            groupBox1.Controls.Add(comboBox1);
+            groupBox1.Controls.Add(btn_add);
+            groupBox1.Controls.Add(cmb_majors);
             groupBox1.Controls.Add(label4);
-            groupBox1.Controls.Add(textBox2);
-            groupBox1.Controls.Add(textBox1);
-            groupBox1.Controls.Add(numericUpDown1);
+            groupBox1.Controls.Add(txt_title);
+            groupBox1.Controls.Add(txt_code);
+            groupBox1.Controls.Add(nud_credits);
             groupBox1.Controls.Add(label3);
             groupBox1.Controls.Add(label2);
             groupBox1.Controls.Add(label1);
@@ -215,22 +187,23 @@
             button2.Text = "Clear";
             button2.UseVisualStyleBackColor = true;
             // 
-            // button1
+            // btn_add
             // 
-            button1.Location = new Point(148, 174);
-            button1.Name = "button1";
-            button1.Size = new Size(95, 23);
-            button1.TabIndex = 18;
-            button1.Text = "Add";
-            button1.UseVisualStyleBackColor = true;
+            btn_add.Location = new Point(148, 174);
+            btn_add.Name = "btn_add";
+            btn_add.Size = new Size(95, 23);
+            btn_add.TabIndex = 18;
+            btn_add.Text = "Add";
+            btn_add.UseVisualStyleBackColor = true;
+            btn_add.Click += btn_add_Click;
             // 
-            // comboBox1
+            // cmb_majors
             // 
-            comboBox1.FormattingEnabled = true;
-            comboBox1.Location = new Point(122, 116);
-            comboBox1.Name = "comboBox1";
-            comboBox1.Size = new Size(121, 23);
-            comboBox1.TabIndex = 17;
+            cmb_majors.FormattingEnabled = true;
+            cmb_majors.Location = new Point(122, 116);
+            cmb_majors.Name = "cmb_majors";
+            cmb_majors.Size = new Size(121, 23);
+            cmb_majors.TabIndex = 17;
             // 
             // label4
             // 
@@ -241,29 +214,29 @@
             label4.TabIndex = 16;
             label4.Text = "Major:";
             // 
-            // textBox2
+            // txt_title
             // 
-            textBox2.Location = new Point(122, 83);
-            textBox2.Name = "textBox2";
-            textBox2.Size = new Size(121, 23);
-            textBox2.TabIndex = 15;
+            txt_title.Location = new Point(122, 83);
+            txt_title.Name = "txt_title";
+            txt_title.Size = new Size(121, 23);
+            txt_title.TabIndex = 15;
             // 
-            // textBox1
+            // txt_code
             // 
-            textBox1.Location = new Point(122, 50);
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(121, 23);
-            textBox1.TabIndex = 14;
+            txt_code.Location = new Point(122, 50);
+            txt_code.Name = "txt_code";
+            txt_code.Size = new Size(121, 23);
+            txt_code.TabIndex = 14;
             // 
-            // numericUpDown1
+            // nud_credits
             // 
-            numericUpDown1.Location = new Point(185, 145);
-            numericUpDown1.Maximum = new decimal(new int[] { 9, 0, 0, 0 });
-            numericUpDown1.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
-            numericUpDown1.Name = "numericUpDown1";
-            numericUpDown1.Size = new Size(58, 23);
-            numericUpDown1.TabIndex = 13;
-            numericUpDown1.Value = new decimal(new int[] { 1, 0, 0, 0 });
+            nud_credits.Location = new Point(185, 145);
+            nud_credits.Maximum = new decimal(new int[] { 9, 0, 0, 0 });
+            nud_credits.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            nud_credits.Name = "nud_credits";
+            nud_credits.Size = new Size(58, 23);
+            nud_credits.TabIndex = 13;
+            nud_credits.Value = new decimal(new int[] { 1, 0, 0, 0 });
             // 
             // label3
             // 
@@ -292,15 +265,189 @@
             label1.TabIndex = 10;
             label1.Text = "Course Code:";
             // 
-            // pictureBox1
+            // label5
             // 
-            pictureBox1.Image = (Image)resources.GetObject("pictureBox1.Image");
-            pictureBox1.Location = new Point(6, 22);
-            pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(280, 69);
-            pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
-            pictureBox1.TabIndex = 17;
-            pictureBox1.TabStop = false;
+            label5.AutoSize = true;
+            label5.Location = new Point(292, 22);
+            label5.Name = "label5";
+            label5.Size = new Size(183, 15);
+            label5.TabIndex = 15;
+            label5.Text = "Select an item to update/remove:";
+            // 
+            // btn_delete
+            // 
+            btn_delete.Location = new Point(606, 349);
+            btn_delete.Name = "btn_delete";
+            btn_delete.Size = new Size(75, 23);
+            btn_delete.TabIndex = 14;
+            btn_delete.Text = "Delete";
+            btn_delete.UseVisualStyleBackColor = true;
+            btn_delete.Click += btn_delete_Click;
+            // 
+            // btn_update
+            // 
+            btn_update.Location = new Point(687, 349);
+            btn_update.Name = "btn_update";
+            btn_update.Size = new Size(75, 23);
+            btn_update.TabIndex = 13;
+            btn_update.Text = "Update";
+            btn_update.UseVisualStyleBackColor = true;
+            btn_update.Click += btn_update_Click;
+            // 
+            // dgv_courses
+            // 
+            dgv_courses.AllowUserToAddRows = false;
+            dgv_courses.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            dgv_courses.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgv_courses.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgv_courses.Columns.AddRange(new DataGridViewColumn[] { col_id, col_code, col_title });
+            dgv_courses.Location = new Point(292, 40);
+            dgv_courses.MultiSelect = false;
+            dgv_courses.Name = "dgv_courses";
+            dgv_courses.ReadOnly = true;
+            dgv_courses.RowHeadersVisible = false;
+            dgv_courses.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgv_courses.Size = new Size(470, 303);
+            dgv_courses.TabIndex = 12;
+            dgv_courses.CellClick += dgv_courses_CellClick;
+            // 
+            // col_id
+            // 
+            col_id.DataPropertyName = "course_id";
+            col_id.HeaderText = "ID";
+            col_id.Name = "col_id";
+            col_id.ReadOnly = true;
+            // 
+            // col_code
+            // 
+            col_code.DataPropertyName = "course_code";
+            col_code.HeaderText = "Code";
+            col_code.Name = "col_code";
+            col_code.ReadOnly = true;
+            // 
+            // col_title
+            // 
+            col_title.DataPropertyName = "course_code";
+            col_title.HeaderText = "Title";
+            col_title.Name = "col_title";
+            col_title.ReadOnly = true;
+            // 
+            // tabPage2
+            // 
+            tabPage2.Controls.Add(groupBox2);
+            tabPage2.Controls.Add(lv_majors);
+            tabPage2.Location = new Point(4, 24);
+            tabPage2.Name = "tabPage2";
+            tabPage2.Padding = new Padding(3);
+            tabPage2.Size = new Size(768, 383);
+            tabPage2.TabIndex = 1;
+            tabPage2.Text = "Majors";
+            tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // groupBox2
+            // 
+            groupBox2.Controls.Add(btn_clear);
+            groupBox2.Controls.Add(btn_updateMajor);
+            groupBox2.Controls.Add(btn_addMajor);
+            groupBox2.Controls.Add(btn_deleteMajor);
+            groupBox2.Controls.Add(label6);
+            groupBox2.Controls.Add(txt_majorName);
+            groupBox2.Location = new Point(603, 6);
+            groupBox2.Name = "groupBox2";
+            groupBox2.Size = new Size(159, 371);
+            groupBox2.TabIndex = 1;
+            groupBox2.TabStop = false;
+            groupBox2.Text = "Edit/Add Majors";
+            // 
+            // btn_clear
+            // 
+            btn_clear.Location = new Point(8, 273);
+            btn_clear.Name = "btn_clear";
+            btn_clear.Size = new Size(145, 63);
+            btn_clear.TabIndex = 5;
+            btn_clear.Text = "Clear";
+            btn_clear.UseVisualStyleBackColor = true;
+            btn_clear.Click += btn_clear_Click;
+            // 
+            // btn_updateMajor
+            // 
+            btn_updateMajor.Location = new Point(6, 204);
+            btn_updateMajor.Name = "btn_updateMajor";
+            btn_updateMajor.Size = new Size(145, 63);
+            btn_updateMajor.TabIndex = 4;
+            btn_updateMajor.Text = "Update";
+            btn_updateMajor.UseVisualStyleBackColor = true;
+            btn_updateMajor.Click += btn_updateMajor_Click;
+            // 
+            // btn_addMajor
+            // 
+            btn_addMajor.Location = new Point(6, 66);
+            btn_addMajor.Name = "btn_addMajor";
+            btn_addMajor.Size = new Size(145, 63);
+            btn_addMajor.TabIndex = 3;
+            btn_addMajor.Text = "Add";
+            btn_addMajor.UseVisualStyleBackColor = true;
+            btn_addMajor.Click += btn_addMajor_Click;
+            // 
+            // btn_deleteMajor
+            // 
+            btn_deleteMajor.Location = new Point(6, 135);
+            btn_deleteMajor.Name = "btn_deleteMajor";
+            btn_deleteMajor.Size = new Size(145, 63);
+            btn_deleteMajor.TabIndex = 2;
+            btn_deleteMajor.Text = "Delete";
+            btn_deleteMajor.UseVisualStyleBackColor = true;
+            btn_deleteMajor.Click += btn_deleteMajor_Click;
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Location = new Point(6, 19);
+            label6.Name = "label6";
+            label6.Size = new Size(41, 15);
+            label6.TabIndex = 1;
+            label6.Text = "Major:";
+            // 
+            // txt_majorName
+            // 
+            txt_majorName.Location = new Point(6, 37);
+            txt_majorName.Name = "txt_majorName";
+            txt_majorName.Size = new Size(145, 23);
+            txt_majorName.TabIndex = 0;
+            // 
+            // lv_majors
+            // 
+            lv_majors.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            lv_majors.Columns.AddRange(new ColumnHeader[] { major_id, major_name });
+            lv_majors.FullRowSelect = true;
+            lv_majors.GridLines = true;
+            lv_majors.Location = new Point(6, 3);
+            lv_majors.Name = "lv_majors";
+            lv_majors.Size = new Size(591, 374);
+            lv_majors.TabIndex = 0;
+            lv_majors.UseCompatibleStateImageBehavior = false;
+            lv_majors.View = View.Details;
+            lv_majors.SelectedIndexChanged += lv_majors_SelectedIndexChanged;
+            // 
+            // major_id
+            // 
+            major_id.Tag = "ID";
+            major_id.Width = 50;
+            // 
+            // major_name
+            // 
+            major_name.Tag = "Major Name";
+            major_name.Width = 200;
+            // 
+            // tabPage3
+            // 
+            tabPage3.Location = new Point(4, 24);
+            tabPage3.Name = "tabPage3";
+            tabPage3.Padding = new Padding(3);
+            tabPage3.Size = new Size(768, 383);
+            tabPage3.TabIndex = 2;
+            tabPage3.Text = "Accounts";
+            tabPage3.UseVisualStyleBackColor = true;
             // 
             // AdminPanelForm
             // 
@@ -312,16 +459,20 @@
             MainMenuStrip = menuStrip1;
             Name = "AdminPanelForm";
             Text = "AdminPanelForm";
+            Load += AdminPanelForm_Load;
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
             tabControl1.ResumeLayout(false);
             tabPage1.ResumeLayout(false);
             tabPage1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown1).EndInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)nud_credits).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dgv_courses).EndInit();
+            tabPage2.ResumeLayout(false);
+            groupBox2.ResumeLayout(false);
+            groupBox2.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -339,20 +490,33 @@
         private TabPage tabPage2;
         private TabPage tabPage3;
         private Label label5;
-        private Button button4;
-        private Button button3;
-        private DataGridView dataGridView1;
+        private Button btn_delete;
+        private Button btn_update;
+        private DataGridView dgv_courses;
         private PictureBox pictureBox1;
         private GroupBox groupBox1;
         private Button button2;
-        private Button button1;
-        private ComboBox comboBox1;
+        private Button btn_add;
+        private ComboBox cmb_majors;
         private Label label4;
-        private TextBox textBox2;
-        private TextBox textBox1;
-        private NumericUpDown numericUpDown1;
+        private TextBox txt_title;
+        private TextBox txt_code;
+        private NumericUpDown nud_credits;
         private Label label3;
         private Label label2;
         private Label label1;
+        private DataGridViewTextBoxColumn col_id;
+        private DataGridViewTextBoxColumn col_code;
+        private DataGridViewTextBoxColumn col_title;
+        private ListView lv_majors;
+        private ColumnHeader major_id;
+        private ColumnHeader major_name;
+        private GroupBox groupBox2;
+        private Button btn_addMajor;
+        private Button btn_deleteMajor;
+        private Label label6;
+        private TextBox txt_majorName;
+        private Button btn_updateMajor;
+        private Button btn_clear;
     }
 }
