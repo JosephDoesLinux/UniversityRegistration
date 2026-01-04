@@ -143,12 +143,23 @@ namespace UniversityRegistration
 
 
 
-        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+
+
+
+
+        private void logoutToolStripMenuItem_Click_1(object sender, EventArgs e)
+        {
+
+            new Login().Show();
+            this.Close();
+        }
+
+        private void exitToolStripMenuItem_Click_1(object sender, EventArgs e)
         {
             Application.Exit();
         }
 
-        private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
+        private void refreshToolStripMenuItem_Click_1(object sender, EventArgs e)
         {
             LoadMajorCourses();
             RefreshStats();
@@ -170,12 +181,5 @@ namespace UniversityRegistration
                 MessageBox.Show("Unable to open the link: " + ex.Message);
             }
         }
-
-        private void logoutToolStripMenuItem_Click_1(object sender, EventArgs e)
-        {
-
-            new Login().Show();
-            this.Close();
-        }
     }
-    }
+}
