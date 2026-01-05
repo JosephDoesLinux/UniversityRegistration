@@ -26,6 +26,7 @@ namespace UniversityRegistration
         private void FillMajors()
         {
             // Display names like 'Computer Science', but keep the 'ID' in the background
+            // NOTE: SqlDataAdapter is used here to fill a DataTable without manually opening/closing the connection.
             SqlDataAdapter da = new SqlDataAdapter("SELECT * FROM Majors", conn);
             DataTable dt = new DataTable();
             da.Fill(dt);
@@ -78,6 +79,8 @@ namespace UniversityRegistration
                     txt_title.Text = row.Cells["course_title"].Value?.ToString();
 
                     // Safe Credit Loading
+                    // NOTE: We must check for DBNull.Value because database NULLs are different from C# nulls.
+                    // If we try to cast DBNull to int, the program will crash.
                     if (row.Cells["credits"].Value != null && row.Cells["credits"].Value != DBNull.Value)
                     {
                         int creditVal = Convert.ToInt32(row.Cells["credits"].Value);
@@ -254,6 +257,8 @@ namespace UniversityRegistration
                     catch (SqlException ex)
                     {
                         // SQL Server Error 547 = Foreign Key Constraint violation
+                        // NOTE: This error happens because the database prevents deleting a Major that is still linked to Students or Courses.
+                        // This is called "Referential Integrity".
                         if (ex.Number == 547)
                         {
                             MessageBox.Show("ERROR: Cannot delete this Major. Please delete all Students and Courses assigned to this major first.");
@@ -280,6 +285,8 @@ namespace UniversityRegistration
         private void LoadUsers()
         {
             // Use a LEFT JOIN so admins (who might not have a major) still show up
+            // NOTE: LEFT JOIN ensures we get all Users, even if they don't have a matching Major (like Admins).
+            // If we used INNER JOIN, Admins with NULL major_id would be hidden!
             string query = @"SELECT u.user_id, u.full_name, u.password, u.user_role, m.major_name 
                      FROM Users u 
                      LEFT JOIN Majors m ON u.major_id = m.major_id";

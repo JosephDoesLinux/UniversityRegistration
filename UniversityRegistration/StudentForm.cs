@@ -145,11 +145,31 @@ namespace UniversityRegistration
 
         private void btn_remove_Click(object sender, EventArgs e)
         {
-            foreach (DataGridViewRow row in dgv_registered.SelectedRows)
+            if (dgv_registered.SelectedRows.Count == 0) return;
+
+            try
             {
-                // Note: This only removes it from the UI grid. 
-                // If it's already in the DB, it won't delete it from the DB unless you add a DELETE query here.
-                dgv_registered.Rows.Remove(row);
+                conn.Open();
+                foreach (DataGridViewRow row in dgv_registered.SelectedRows)
+                {
+                    int cid = Convert.ToInt32(row.Cells[0].Value);
+
+                    // Logic: Try to delete from DB. If it doesn't exist there, 
+                    // it just removes it from the UI grid anyway.
+                    string deleteQuery = "DELETE FROM Enrollments WHERE student_id = @sid AND course_id = @cid";
+                    SqlCommand cmd = new SqlCommand(deleteQuery, conn);
+                    cmd.Parameters.AddWithValue("@sid", currentStudentId);
+                    cmd.Parameters.AddWithValue("@cid", cid);
+                    cmd.ExecuteNonQuery();
+
+                    dgv_registered.Rows.Remove(row);
+                }
+            }
+            catch (Exception ex) { MessageBox.Show("Remove Error: " + ex.Message); }
+            finally
+            {
+                conn.Close();
+                RefreshStats();
             }
         }
 
@@ -191,6 +211,8 @@ namespace UniversityRegistration
             try
             {
                 if (conn.State == ConnectionState.Closed) conn.Open();
+                // NOTE: We use SQL Aggregate functions (COUNT, SUM) to let the database do the math for us.
+                // This is much faster than looping through rows in C# to calculate totals.
                 string query = @"SELECT COUNT(e.course_id), SUM(c.credits) 
                                  FROM Enrollments e 
                                  JOIN Courses c ON e.course_id = c.course_id 
@@ -214,5 +236,24 @@ namespace UniversityRegistration
         private void logoutToolStripMenuItem_Click_1(object sender, EventArgs e) { new Login().Show(); this.Close(); }
         private void exitToolStripMenuItem_Click_1(object sender, EventArgs e) { Application.Exit(); }
         private void refreshToolStripMenuItem_Click_1(object sender, EventArgs e) { LoadAvailableCourses(); LoadRegisteredHistory(); RefreshStats(); }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string githubUrl = "https://github.com/JosephDoesLinux/UniversityRegistration";
+
+            try
+            {
+                // This opens the URL in the default browser
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = githubUrl,
+                    UseShellExecute = true // Required for .NET Core / .NET 5+
+                });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Unable to open the link: " + ex.Message);
+            }
+        }
     }
 }

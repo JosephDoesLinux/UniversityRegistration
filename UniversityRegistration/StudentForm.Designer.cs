@@ -37,6 +37,7 @@
             refreshToolStripMenuItem = new ToolStripMenuItem();
             aboutToolStripMenuItem = new ToolStripMenuItem();
             groupBox1 = new GroupBox();
+            btn_remove = new Button();
             dgv_registered = new DataGridView();
             dgv_available = new DataGridView();
             btn_finalize = new Button();
@@ -45,7 +46,6 @@
             lbl_stats = new Label();
             pictureBox1 = new PictureBox();
             groupBox2 = new GroupBox();
-            btn_remove = new Button();
             menuStrip1.SuspendLayout();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgv_registered).BeginInit();
@@ -102,6 +102,7 @@
             aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
             aboutToolStripMenuItem.Size = new Size(52, 20);
             aboutToolStripMenuItem.Text = "About";
+            aboutToolStripMenuItem.Click += aboutToolStripMenuItem_Click;
             // 
             // groupBox1
             // 
@@ -116,6 +117,16 @@
             groupBox1.TabIndex = 4;
             groupBox1.TabStop = false;
             groupBox1.Text = "Course Registration";
+            // 
+            // btn_remove
+            // 
+            btn_remove.Location = new Point(312, 359);
+            btn_remove.Name = "btn_remove";
+            btn_remove.Size = new Size(76, 31);
+            btn_remove.TabIndex = 10;
+            btn_remove.Text = "Delete";
+            btn_remove.UseVisualStyleBackColor = true;
+            btn_remove.Click += btn_remove_Click;
             // 
             // dgv_registered
             // 
@@ -193,16 +204,6 @@
             groupBox2.TabIndex = 8;
             groupBox2.TabStop = false;
             groupBox2.Text = "Message";
-            // 
-            // btn_remove
-            // 
-            btn_remove.Location = new Point(312, 359);
-            btn_remove.Name = "btn_remove";
-            btn_remove.Size = new Size(76, 31);
-            btn_remove.TabIndex = 10;
-            btn_remove.Text = "Delete";
-            btn_remove.UseVisualStyleBackColor = true;
-            btn_remove.Click += btn_remove_Click;
             // 
             // StudentForm
             // 
