@@ -8,19 +8,11 @@ namespace UniversityRegistration
 {
     public partial class StudentForm : Form
     {
-        // Class-level variables to store student info
         int currentStudentId;
         int currentMajorId;
         string currentStudentName;
 
-        // NEW: Map to link Course Code (String) to the actual Course ID (Integer)
-        // Key: "CSIT381", Value: 12 (the auto-increment ID)
-        Dictionary<string, int> courseIdMap = new Dictionary<string, int>();
-
-        static string connString = "Data Source= RDPWindows\\SQLEXPRESS;" +
-            " Initial Catalog=UniversityDB; Integrated Security=True;" +
-            " TrustServerCertificate=True";
-
+        static string connString = "Data Source= RDPWindows\\SQLEXPRESS; Initial Catalog=UniversityDB; Integrated Security=True; TrustServerCertificate=True";
         SqlConnection conn = new SqlConnection(connString);
 
         public StudentForm(int studentId, int majorId, string studentName)
@@ -29,88 +21,135 @@ namespace UniversityRegistration
             this.currentStudentId = studentId;
             this.currentMajorId = majorId;
             this.currentStudentName = studentName;
+
+            // Link the Double Click Events
+            dgv_available.CellDoubleClick += CourseDetails_DoubleClick;
+            dgv_registered.CellDoubleClick += CourseDetails_DoubleClick;
         }
 
         private void StudentForm_Load(object sender, EventArgs e)
         {
             lbl_welcome.Text = $"Welcome, {currentStudentName} (ID: {currentStudentId})";
-            LoadMajorCourses();
-            RefreshStats();
+            SetupGrids();
+            LoadAvailableCourses();
             LoadRegisteredHistory();
+            RefreshStats();
         }
 
-        // --- REGISTRATION LOGIC ---
-
-        private void RefreshStats()
+        private void SetupGrids()
         {
-            try
-            {
-                if (conn.State == ConnectionState.Closed) conn.Open();
-
-                // JOIN on numeric course_id to get accurate credit sums
-                string query = @"SELECT COUNT(e.course_id), SUM(c.credits) 
-                                 FROM Enrollments e 
-                                 JOIN Courses c ON e.course_id = c.course_id 
-                                 WHERE e.student_id = @sid";
-
-                SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@sid", currentStudentId);
-
-                SqlDataReader reader = cmd.ExecuteReader();
-                if (reader.Read())
-                {
-                    int courseCount = reader[0] != DBNull.Value ? Convert.ToInt32(reader[0]) : 0;
-                    int creditSum = reader[1] != DBNull.Value ? Convert.ToInt32(reader[1]) : 0;
-
-                    lbl_stats.Text = $"Registered: {courseCount} courses | Total Credits: {creditSum}";
-                }
-            }
-            catch (Exception ex) { MessageBox.Show("Stats Error: " + ex.Message); }
-            finally { conn.Close(); }
+            ConfigureGrid(dgv_available);
+            ConfigureGrid(dgv_registered);
         }
 
-        private void LoadMajorCourses()
+        private void ConfigureGrid(DataGridView dgv)
         {
-            clb_availableCourses.Items.Clear();
-            courseIdMap.Clear(); // Clear the map before reloading
+            dgv.Columns.Clear();
+            dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgv.ReadOnly = true;
+            dgv.AllowUserToAddRows = false;
+            dgv.RowHeadersVisible = false;
 
-            // Fetch the ID, Code, and Title
-            string query = "SELECT course_id, course_code, course_title FROM Courses WHERE major_id = @mid";
-            SqlCommand cmd = new SqlCommand(query, conn);
-            cmd.Parameters.AddWithValue("@mid", currentMajorId);
+            // Using columns to hold the data structured
+            dgv.Columns.Add("id", "ID");           // Col 0: Hidden ID
+            dgv.Columns.Add("code", "Code");       // Col 1
+            dgv.Columns.Add("title", "Title");     // Col 2
+            dgv.Columns.Add("credits", "Credits"); // Col 3
+
+            dgv.Columns[0].Visible = false;
+            dgv.Columns[2].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+        }
+
+        private void LoadAvailableCourses()
+        {
+            dgv_available.Rows.Clear();
+            string query = "SELECT course_id, course_code, course_title, credits FROM Courses WHERE major_id = @mid";
 
             try
             {
                 conn.Open();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@mid", currentMajorId);
+                SqlDataReader r = cmd.ExecuteReader();
+                while (r.Read())
                 {
-                    string code = reader["course_code"].ToString();
-                    int id = Convert.ToInt32(reader["course_id"]);
-                    string displayString = $"{code} - {reader["course_title"]}";
-
-                    // Add text to the UI list
-                    clb_availableCourses.Items.Add(displayString);
-
-                    // Add the relationship to our Dictionary
-                    if (!courseIdMap.ContainsKey(code))
-                    {
-                        courseIdMap.Add(code, id);
-                    }
+                    dgv_available.Rows.Add(r["course_id"], r["course_code"], r["course_title"], r["credits"]);
                 }
             }
             catch (Exception ex) { MessageBox.Show("Load Error: " + ex.Message); }
             finally { conn.Close(); }
         }
 
+        private void LoadRegisteredHistory()
+        {
+            dgv_registered.Rows.Clear();
+            string query = @"SELECT c.course_id, c.course_code, c.course_title, c.credits 
+                             FROM Enrollments e 
+                             JOIN Courses c ON e.course_id = c.course_id 
+                             WHERE e.student_id = @sid";
+            try
+            {
+                if (conn.State == ConnectionState.Closed) conn.Open();
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@sid", currentStudentId);
+                SqlDataReader r = cmd.ExecuteReader();
+                while (r.Read())
+                {
+                    dgv_registered.Rows.Add(r["course_id"], r["course_code"], r["course_title"], r["credits"]);
+                }
+            }
+            catch (Exception ex) { MessageBox.Show("History Load Error: " + ex.Message); }
+            finally { conn.Close(); }
+        }
+
+        private void CourseDetails_DoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0) return;
+            DataGridView dgv = (DataGridView)sender;
+
+            // Extract the hidden ID and Title from the row
+            string courseId = dgv.Rows[e.RowIndex].Cells[0].Value.ToString();
+            string courseTitle = dgv.Rows[e.RowIndex].Cells[2].Value.ToString();
+
+            string query = "SELECT course_description FROM Courses WHERE course_id = @cid";
+
+            try
+            {
+                conn.Open();
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@cid", courseId);
+                object desc = cmd.ExecuteScalar();
+                string message = (desc == DBNull.Value || desc == null) ? "No description." : desc.ToString();
+                MessageBox.Show(message, $"Course Details: {courseTitle}");
+            }
+            finally { conn.Close(); }
+        }
+
         private void btn_register_Click(object sender, EventArgs e)
         {
-            foreach (var item in clb_availableCourses.CheckedItems)
+            foreach (DataGridViewRow row in dgv_available.SelectedRows)
             {
-                if (!lb_registeredCourses.Items.Contains(item))
+                bool exists = false;
+                foreach (DataGridViewRow regRow in dgv_registered.Rows)
                 {
-                    lb_registeredCourses.Items.Add(item);
+                    if (regRow.Cells[0].Value.ToString() == row.Cells[0].Value.ToString())
+                        exists = true;
                 }
+
+                if (!exists)
+                {
+                    dgv_registered.Rows.Add(row.Cells[0].Value, row.Cells[1].Value, row.Cells[2].Value, row.Cells[3].Value);
+                }
+            }
+        }
+
+        private void btn_remove_Click(object sender, EventArgs e)
+        {
+            foreach (DataGridViewRow row in dgv_registered.SelectedRows)
+            {
+                // Note: This only removes it from the UI grid. 
+                // If it's already in the DB, it won't delete it from the DB unless you add a DELETE query here.
+                dgv_registered.Rows.Remove(row);
             }
         }
 
@@ -119,97 +158,61 @@ namespace UniversityRegistration
             try
             {
                 conn.Open();
-                foreach (var item in lb_registeredCourses.Items)
+                foreach (DataGridViewRow row in dgv_registered.Rows)
                 {
-                    // 1. Extract the Course Code (e.g., "CSIT381")
-                    string courseCode = item.ToString().Split('-')[0].Trim();
+                    int cid = Convert.ToInt32(row.Cells[0].Value);
 
-                    // 2. Use the map to get the real Integer Course ID
-                    if (courseIdMap.TryGetValue(courseCode, out int actualNumericId))
+                    string check = "SELECT COUNT(*) FROM Enrollments WHERE student_id=@sid AND course_id=@cid";
+                    SqlCommand checkCmd = new SqlCommand(check, conn);
+                    checkCmd.Parameters.AddWithValue("@sid", currentStudentId);
+                    checkCmd.Parameters.AddWithValue("@cid", cid);
+
+                    if ((int)checkCmd.ExecuteScalar() == 0)
                     {
-                        // 3. Insert the Integer ID into the numeric course_id column
-                        string query = "INSERT INTO Enrollments (student_id, course_id, reg_date) VALUES (@uid, @cid, GETDATE())";
-
-                        SqlCommand cmd = new SqlCommand(query, conn);
-                        cmd.Parameters.AddWithValue("@uid", currentStudentId);
-                        cmd.Parameters.AddWithValue("@cid", actualNumericId); // Correct numeric type
+                        string ins = "INSERT INTO Enrollments (student_id, course_id, reg_date) VALUES (@sid, @cid, GETDATE())";
+                        SqlCommand cmd = new SqlCommand(ins, conn);
+                        cmd.Parameters.AddWithValue("@sid", currentStudentId);
+                        cmd.Parameters.AddWithValue("@cid", cid);
                         cmd.ExecuteNonQuery();
                     }
                 }
-                MessageBox.Show("Registration successful!");
-                lb_registeredCourses.Items.Clear();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Finalize Error: " + ex.Message);
+                MessageBox.Show("Registration successfully finalized!");
             }
             finally
             {
-                if (conn.State == ConnectionState.Open) conn.Close();
-                RefreshStats();
+                conn.Close();
                 LoadRegisteredHistory();
+                RefreshStats();
             }
         }
 
-        // --- MENU BAR ACTIONS ---
-
-        private void logoutToolStripMenuItem_Click_1(object sender, EventArgs e)
+        private void RefreshStats()
         {
-            new Login().Show();
-            this.Close();
-        }
-
-        private void exitToolStripMenuItem_Click_1(object sender, EventArgs e)
-        {
-            Application.Exit();
-        }
-
-        private void refreshToolStripMenuItem_Click_1(object sender, EventArgs e)
-        {
-            LoadMajorCourses();
-            RefreshStats();
-        }
-
-        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            string githubUrl = "https://github.com/JosephDoesLinux/UniversityRegistration";
-            try
-            {
-                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
-                {
-                    FileName = githubUrl,
-                    UseShellExecute = true
-                });
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Unable to open the link: " + ex.Message);
-            }
-        }
-        private void LoadRegisteredHistory()
-        {
-            lb_registeredCourses.Items.Clear();
-
-            // Query to get the Code and Title of everything the student is ALREADY in
-            string query = @"SELECT c.course_code, c.course_title 
-                     FROM Enrollments e 
-                     JOIN Courses c ON e.course_id = c.course_id 
-                     WHERE e.student_id = @sid";
-
-            SqlCommand cmd = new SqlCommand(query, conn);
-            cmd.Parameters.AddWithValue("@sid", currentStudentId);
-
             try
             {
                 if (conn.State == ConnectionState.Closed) conn.Open();
+                string query = @"SELECT COUNT(e.course_id), SUM(c.credits) 
+                                 FROM Enrollments e 
+                                 JOIN Courses c ON e.course_id = c.course_id 
+                                 WHERE e.student_id = @sid";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@sid", currentStudentId);
                 SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                if (reader.Read())
                 {
-                    lb_registeredCourses.Items.Add($"{reader["course_code"]} - {reader["course_title"]}");
+                    int count = reader[0] != DBNull.Value ? Convert.ToInt32(reader[0]) : 0;
+                    int sum = reader[1] != DBNull.Value ? Convert.ToInt32(reader[1]) : 0;
+                    lbl_stats.Text = $"Registered: {count} courses | Total Credits: {sum}";
                 }
             }
-            catch (Exception ex) { MessageBox.Show("History Load Error: " + ex.Message); }
+            catch { }
             finally { conn.Close(); }
         }
+
+        // --- MENU ACTIONS ---
+        private void logoutToolStripMenuItem_Click_1(object sender, EventArgs e) { new Login().Show(); this.Close(); }
+        private void exitToolStripMenuItem_Click_1(object sender, EventArgs e) { Application.Exit(); }
+        private void refreshToolStripMenuItem_Click_1(object sender, EventArgs e) { LoadAvailableCourses(); LoadRegisteredHistory(); RefreshStats(); }
     }
 }

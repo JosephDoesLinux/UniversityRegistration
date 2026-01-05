@@ -37,16 +37,19 @@
             refreshToolStripMenuItem = new ToolStripMenuItem();
             aboutToolStripMenuItem = new ToolStripMenuItem();
             groupBox1 = new GroupBox();
+            dgv_registered = new DataGridView();
+            dgv_available = new DataGridView();
             btn_finalize = new Button();
             btn_register = new Button();
-            lb_registeredCourses = new ListBox();
-            clb_availableCourses = new CheckedListBox();
             lbl_welcome = new Label();
             lbl_stats = new Label();
             pictureBox1 = new PictureBox();
             groupBox2 = new GroupBox();
+            btn_remove = new Button();
             menuStrip1.SuspendLayout();
             groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dgv_registered).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dgv_available).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             groupBox2.SuspendLayout();
             SuspendLayout();
@@ -70,7 +73,7 @@
             // exitToolStripMenuItem
             // 
             exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            exitToolStripMenuItem.Size = new Size(180, 22);
+            exitToolStripMenuItem.Size = new Size(92, 22);
             exitToolStripMenuItem.Text = "Exit";
             exitToolStripMenuItem.Click += exitToolStripMenuItem_Click_1;
             // 
@@ -84,14 +87,14 @@
             // logoutToolStripMenuItem
             // 
             logoutToolStripMenuItem.Name = "logoutToolStripMenuItem";
-            logoutToolStripMenuItem.Size = new Size(180, 22);
+            logoutToolStripMenuItem.Size = new Size(113, 22);
             logoutToolStripMenuItem.Text = "Logout";
             logoutToolStripMenuItem.Click += logoutToolStripMenuItem_Click_1;
             // 
             // refreshToolStripMenuItem
             // 
             refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
-            refreshToolStripMenuItem.Size = new Size(180, 22);
+            refreshToolStripMenuItem.Size = new Size(113, 22);
             refreshToolStripMenuItem.Text = "Refresh";
             // 
             // aboutToolStripMenuItem
@@ -102,10 +105,11 @@
             // 
             // groupBox1
             // 
+            groupBox1.Controls.Add(btn_remove);
+            groupBox1.Controls.Add(dgv_registered);
+            groupBox1.Controls.Add(dgv_available);
             groupBox1.Controls.Add(btn_finalize);
             groupBox1.Controls.Add(btn_register);
-            groupBox1.Controls.Add(lb_registeredCourses);
-            groupBox1.Controls.Add(clb_availableCourses);
             groupBox1.Location = new Point(12, 154);
             groupBox1.Name = "groupBox1";
             groupBox1.Size = new Size(543, 396);
@@ -113,11 +117,29 @@
             groupBox1.TabStop = false;
             groupBox1.Text = "Course Registration";
             // 
+            // dgv_registered
+            // 
+            dgv_registered.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgv_registered.Location = new Point(312, 22);
+            dgv_registered.Name = "dgv_registered";
+            dgv_registered.Size = new Size(225, 331);
+            dgv_registered.TabIndex = 9;
+            dgv_registered.CellDoubleClick += CourseDetails_DoubleClick;
+            // 
+            // dgv_available
+            // 
+            dgv_available.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgv_available.Location = new Point(6, 22);
+            dgv_available.Name = "dgv_available";
+            dgv_available.Size = new Size(225, 368);
+            dgv_available.TabIndex = 8;
+            dgv_available.CellDoubleClick += CourseDetails_DoubleClick;
+            // 
             // btn_finalize
             // 
-            btn_finalize.Location = new Point(312, 359);
+            btn_finalize.Location = new Point(394, 359);
             btn_finalize.Name = "btn_finalize";
-            btn_finalize.Size = new Size(202, 31);
+            btn_finalize.Size = new Size(143, 31);
             btn_finalize.TabIndex = 7;
             btn_finalize.Text = "Save Changes / Finalize";
             btn_finalize.UseVisualStyleBackColor = true;
@@ -132,23 +154,6 @@
             btn_register.Text = ">>";
             btn_register.UseVisualStyleBackColor = true;
             btn_register.Click += btn_register_Click;
-            // 
-            // lb_registeredCourses
-            // 
-            lb_registeredCourses.FormattingEnabled = true;
-            lb_registeredCourses.ItemHeight = 15;
-            lb_registeredCourses.Location = new Point(312, 34);
-            lb_registeredCourses.Name = "lb_registeredCourses";
-            lb_registeredCourses.Size = new Size(202, 319);
-            lb_registeredCourses.TabIndex = 5;
-            // 
-            // clb_availableCourses
-            // 
-            clb_availableCourses.FormattingEnabled = true;
-            clb_availableCourses.Location = new Point(29, 34);
-            clb_availableCourses.Name = "clb_availableCourses";
-            clb_availableCourses.Size = new Size(202, 346);
-            clb_availableCourses.TabIndex = 4;
             // 
             // lbl_welcome
             // 
@@ -189,6 +194,16 @@
             groupBox2.TabStop = false;
             groupBox2.Text = "Message";
             // 
+            // btn_remove
+            // 
+            btn_remove.Location = new Point(312, 359);
+            btn_remove.Name = "btn_remove";
+            btn_remove.Size = new Size(76, 31);
+            btn_remove.TabIndex = 10;
+            btn_remove.Text = "Delete";
+            btn_remove.UseVisualStyleBackColor = true;
+            btn_remove.Click += btn_remove_Click;
+            // 
             // StudentForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -204,6 +219,8 @@
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
             groupBox1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dgv_registered).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dgv_available).EndInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             groupBox2.ResumeLayout(false);
             groupBox2.PerformLayout();
@@ -222,11 +239,12 @@
         private GroupBox groupBox1;
         private Button btn_finalize;
         private Button btn_register;
-        private ListBox lb_registeredCourses;
-        private CheckedListBox clb_availableCourses;
         private Label lbl_welcome;
         private Label lbl_stats;
         private PictureBox pictureBox1;
         private GroupBox groupBox2;
+        private DataGridView dgv_registered;
+        private DataGridView dgv_available;
+        private Button btn_remove;
     }
 }
